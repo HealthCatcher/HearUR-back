@@ -7,15 +7,14 @@ from pydantic import BaseModel  # basemodel
 from pymongo import MongoClient  # pymongo
 
 
-class UserInfo(BaseModel):
+class UserInfo(BaseModel):  # 회원 정보 BaseModel
     id: str
     name: str
     birth: str
     email: str
 
 
-# client, user_col = connect_dbms() // 이런식으로 사용하면됨
-def connect_dbms():
+def connect_dbms():  # client, user_col = connect_dbms()
     try:
         dbms_client = MongoClient('localhost', 27017)
         db = dbms_client.HearUR
@@ -25,23 +24,51 @@ def connect_dbms():
         raise HTTPException(status_code=500, detail="DB 연결 실패")
 
 
-# FastAPI 앱 생성
-app = FastAPI()
+app = FastAPI()  # FastAPI 앱 생성
+client, user_col = connect_dbms()  # db 연동
 
 
-@app.get("/")
+@app.get("/")  # root로 접속 확인
 async def root():
     return {"message": "200(OK) 원할하게 접속 성공함."}
 
 
-# /userinfo 엔드포인트 정의 // 회원가입후 dbms에 회원정보 등록하는 로직
-@app.post("/userinfo")
+@app.post("/setuser")  # /setuser 엔드포인트 정의 // 회원가입후 dbms에 회원정보 등록하는 로직
 async def save_user_info(user_info: UserInfo):
     try:
-        client, user_col = connect_dbms()
         user_col.insert_one(user_info.dict())
         client.close()
         return {"message": "successful insert user_info"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="서버 오류 발생")
+
+
+@app.post("/getuser")  # /getuser 엔드포인트 정의 // 로그인 시 userinfo return
+async def get_user_info(uid: str):
+    try:
+        user_info = user_col.find_one({"id": uid})
+        if user_info:
+            return user_info
+        else:
+            raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="서버 오류 발생")
+
+
+@app.post("moduser")  # /moduser 엔드포인트 정의 // 회원정보 수정시 userinfo get
+async def mod_user_info(user_info: UserInfo):
+    try:
+        # 사용자 정보를 수정하는 로직 추가
+        existing_user = user_col.find_one({"id": user_info.id})
+        if existing_user:
+            user_col.replace_one({"id": user_info.id}, user_info.dict())
+            return {"message": "사용자 정보 수정 완료"}
+        else:
+            raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
     except HTTPException as e:
         raise e
     except Exception as e:
