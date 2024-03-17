@@ -1,3 +1,6 @@
+"""
+프로젝트 시작 : 2024-03
+"""
 # python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000 로 서버시작
 # 1. 통신필요할때 8000번 포트 열어줘야함
 # 2. https://url.kr/web_tools/ip/ 여기서 내 ip주소 확인해서 주소전달
@@ -59,7 +62,7 @@ async def get_user_info(uid: str):
         raise HTTPException(status_code=500, detail="서버 오류 발생")
 
 
-@app.post("moduser")  # /moduser 엔드포인트 정의 // 회원정보 수정시 userinfo get
+@app.post("/moduser")  # /moduser 엔드포인트 정의 // 회원정보 수정시 userinfo get
 async def mod_user_info(user_info: UserInfo):
     try:
         # 사용자 정보를 수정하는 로직 추가
