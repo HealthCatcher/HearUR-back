@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-	//implementation group: 'org.bgee.log4jdb-log4j2', name: 'log4jdb-log4j2', version: '1.16'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
