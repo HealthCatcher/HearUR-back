@@ -13,7 +13,8 @@ public class CustomClientRegistrationRepo {
     public ClientRegistrationRepository clientRegistrationRepository() {
         return new InMemoryClientRegistrationRepository(
                 socialClientRegistration.naverClientRegistration(),
-                socialClientRegistration.googleClientRegistration()
+                socialClientRegistration.googleClientRegistration(),
+                socialClientRegistration.kakaoClientRegistration()
         );
     }
 }

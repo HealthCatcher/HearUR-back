@@ -4,7 +4,6 @@ import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.UserDTO;
 import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ public class UserService {
 
     @Transactional
     public UserEntity registerUser(UserDTO userDTO){
-        //Todo
         if (userRepository.existsByUsername(userDTO.getUsername())) {
             throw new IllegalArgumentException("Given user already exists");
         }

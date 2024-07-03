@@ -3,7 +3,6 @@ package com.example.hearurbackend.controller;
 import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.dto.UserDTO;
 import com.example.hearurbackend.entity.PostEntity;
-import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
