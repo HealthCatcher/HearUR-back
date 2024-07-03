@@ -41,7 +41,10 @@ public class CommunityController {
     @Operation(summary = "게시글 작성")
     @PostMapping("/post")
     @ResponseBody
-    public ResponseEntity<String> createPost(@AuthenticationPrincipal CustomOAuth2User auth) {
+    public ResponseEntity<String> createPost(
+            @AuthenticationPrincipal CustomOAuth2User auth,
+            @RequestBody UserDTO userDTO
+    ) {
         auth.getUsername();
         return ResponseEntity.ok("Hello, World!");
     }

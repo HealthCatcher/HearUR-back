@@ -4,13 +4,17 @@ import com.example.hearurbackend.jwt.JWTFilter;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.oauth2.CustomClientRegistrationRepo;
 import com.example.hearurbackend.oauth2.CustomSuccessHandler;
+import com.example.hearurbackend.security.LoginFilter;
 import com.example.hearurbackend.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,22 +27,30 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final CustomClientRegistrationRepo customClientRegistrationRepo;
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
                           CustomSuccessHandler customSuccessHandler,
                           CustomClientRegistrationRepo customClientRegistrationRepo,
-                          JWTUtil jwtUtil
+                          JWTUtil jwtUtil,
+                          AuthenticationConfiguration authenticationConfiguration
     ) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.customClientRegistrationRepo = customClientRegistrationRepo;
         this.jwtUtil = jwtUtil;
+        this.authenticationConfiguration = authenticationConfiguration;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        //cors 설정
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
 
@@ -83,6 +95,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/register").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
@@ -93,6 +107,13 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
