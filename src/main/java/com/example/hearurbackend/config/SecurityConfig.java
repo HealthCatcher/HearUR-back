@@ -8,6 +8,7 @@ import com.example.hearurbackend.security.LoginFilter;
 import com.example.hearurbackend.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -100,6 +101,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/community/post").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/community/post/*").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
