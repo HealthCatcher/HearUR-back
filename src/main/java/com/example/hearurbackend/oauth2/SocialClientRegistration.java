@@ -41,10 +41,10 @@ public class SocialClientRegistration {
     public ClientRegistration kakaoClientRegistration() {
         return ClientRegistration.withRegistrationId("kakao")
                 .clientId("ca10ce0ac9ca9af4f407dc5203ecbca7")
-                .clientSecret("O6O8V0dj9UUNpMfkGxPlj00iZeIU9JLy")
+                //.clientSecret("O6O8V0dj9UUNpMfkGxPlj00iZeIU9JLy")
                 .redirectUri("http://localhost:8080/login/oauth2/code/kakao")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope("profile", "account_email")
+                .scope("profile_nickname")
                 .authorizationUri("https://kauth.kakao.com/oauth/authorize")
                 .tokenUri("https://kauth.kakao.com/oauth/token")
                 .issuerUri("https://kauth.kakao.com")

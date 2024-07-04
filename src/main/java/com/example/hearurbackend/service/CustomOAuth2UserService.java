@@ -4,6 +4,8 @@ package com.example.hearurbackend.service;
 import com.example.hearurbackend.dto.*;
 import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+    private static final Logger log = LoggerFactory.getLogger(CustomOAuth2UserService.class);
     private final UserRepository userRepository;
 
     public CustomOAuth2UserService(UserRepository userRepository) {
@@ -26,6 +29,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         switch (registrationId) {
             case "naver" -> oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
             case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
+            case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
             default -> {
                 return null;
             }

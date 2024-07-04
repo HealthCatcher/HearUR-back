@@ -39,7 +39,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 authToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
                 return authenticationManager.authenticate(authToken);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
                 throw new AuthenticationServiceException("Request Content-Type(application/json) Parsing Error");
             }
         } else {
