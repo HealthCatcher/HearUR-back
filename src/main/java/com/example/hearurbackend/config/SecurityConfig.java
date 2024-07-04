@@ -101,8 +101,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/community/post").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/community/post/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/community/post").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/community/post/*").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS

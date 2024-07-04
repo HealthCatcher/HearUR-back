@@ -62,6 +62,7 @@ public class AuthController {
             if (resultCode == null || !resultCode.equals("00"))
                 return ResponseEntity.badRequest().body("{\"code\": \"400\"}");
 
+            @SuppressWarnings("unchecked")
             Map<String, Object> responseData = (Map<String, Object>) jsonMap.get("response");
 
             providerId = (String) responseData.get("id");
@@ -96,7 +97,7 @@ public class AuthController {
                 }
             }
         }
-        if (token.equals("")) {
+        if (token.isEmpty()) {
             return ResponseEntity.badRequest().body("{\"code\": \"400\"}");
         }
         Cookie cookie = new Cookie("Authorization", null);

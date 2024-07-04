@@ -22,7 +22,9 @@ public class UserController {
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
     @ResponseBody
-    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> register(
+            @RequestBody UserDTO userDTO
+    ) {
         JSONObject responseData = new JSONObject();
         try {
             UserEntity newUser = userService.registerUser(userDTO);
