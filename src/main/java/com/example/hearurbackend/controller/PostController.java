@@ -2,9 +2,12 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.dto.PostDTO;
+import com.example.hearurbackend.dto.PostResponse;
 import com.example.hearurbackend.entity.PostEntity;
 import com.example.hearurbackend.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/community")
 public class PostController {
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
 
     public PostController(PostService communityService) {
@@ -42,23 +46,47 @@ public class PostController {
 
     @Operation(summary = "게시글 작성")
     @PostMapping("/post")
-    public ResponseEntity<String> createPost(
+    public ResponseEntity<PostResponse> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostDTO postDTO
     ) {
-        auth.getUsername();
-        return ResponseEntity.ok("Hello, World!");
+        log.info("auth: {}", auth.getUsername());
+        PostEntity newPost = postService.createPost(postDTO, auth.getUsername());
+        log.info("서비스 리턴 완료 newPost: {}", newPost.getId().toString());
+        PostResponse responseDTO = PostResponse.builder()
+                .id(newPost.getId())
+                .title(newPost.getTitle())
+                .content(newPost.getContent())
+                .author(newPost.getAuthor())
+                .createDate(newPost.getCreateDate())
+                .updateDate(newPost.getUpdateDate())
+                .isUpdated(newPost.isUpdated())
+                .message("Post created successfully")
+                .build();
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/post/{postId}")
-    public ResponseEntity<String> updatePost(
+    public ResponseEntity<PostResponse> updatePost(
             @PathVariable UUID postId,
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostDTO postDTO
     ) {
-        //TODO 엔티티작성자와 auth유저가 동일한지 검증
-        return ResponseEntity.ok("Hello, World!");
+        postService.isAuthor(postId, auth.getUsername());
+        PostEntity updatedPost = postService.updatePost(postId, postDTO);
+        PostResponse responseDTO = PostResponse.builder()
+                .id(updatedPost.getId())
+                .title(updatedPost.getTitle())
+                .content(updatedPost.getContent())
+                .author(updatedPost.getAuthor())
+                .createDate(updatedPost.getCreateDate())
+                .updateDate(updatedPost.getUpdateDate())
+                .isUpdated(updatedPost.isUpdated())
+                .message("Post updated successfully")
+                .build();
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Operation(summary = "게시글 삭제")
