@@ -17,6 +17,7 @@ public class PostEntity {
     private String author;
     private String createDate;
     private String updateDate;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private boolean isUpdated;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<CommentEntity> comments;
 }
