@@ -12,7 +12,8 @@ public class CommentEntity {
     private String content;
     private String author;
     private String createDate;
+    private boolean isUpdated;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    @JoinColumn(name = "post_id")
     private PostEntity post;
 }
