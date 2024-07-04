@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,7 @@ public class AuthController {
 
     @Operation(summary = "JWT 토큰 헤더로 반환")
     @GetMapping("/jwt")
-    public ResponseEntity<String> getJWT(HttpServletRequest request) {
+    public ResponseEntity<String> getJWT(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String token = "";
         if (cookies != null) {
@@ -98,10 +99,16 @@ public class AuthController {
         if (token.equals("")) {
             return ResponseEntity.badRequest().body("{\"code\": \"400\"}");
         }
+        Cookie cookie = new Cookie("Authorization", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         JSONObject responseData = new JSONObject();
         responseData.put("code", "200");
         return ResponseEntity.ok().headers(headers).body(responseData.toString());
     }
+
 }
