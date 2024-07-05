@@ -10,7 +10,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor
-public class UserEntity {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -21,7 +21,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public UserEntity(String username, String password, String name, String email, UserRole role) {
+    public User(String username, String password, String name, String email, UserRole role) {
         this.username = username;
         this.password = password;
         this.name = name;
