@@ -28,7 +28,7 @@ public class UserService {
                 passwordEncoder.encode(userDTO.getPassword()),
                 userDTO.getName(),
                 userDTO.getUsername(),
-                UserRole.ROLE_USER.toString()
+                UserRole.ROLE_USER
         );
         return userRepository.save(user);
     }

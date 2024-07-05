@@ -1,18 +1,14 @@
 package com.example.hearurbackend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.hearurbackend.domain.UserRole;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class UserEntity {
     @Id
@@ -22,9 +18,10 @@ public class UserEntity {
     private String password; // normal user
     private String name;
     private String email;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
-    public UserEntity(String username, String password, String name, String email, String role) {
+    public UserEntity(String username, String password, String name, String email, UserRole role) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -32,4 +29,19 @@ public class UserEntity {
         this.role = role;
     }
 
+    public void createOAuthUser(String username, String email, String name, UserRole role) {
+        this.username = username;
+        this.email = email;
+        this.name = name;
+        this.role = role;
+    }
+
+    public void updateOAuthUser(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

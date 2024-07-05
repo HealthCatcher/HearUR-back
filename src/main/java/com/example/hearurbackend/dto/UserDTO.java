@@ -1,5 +1,6 @@
 package com.example.hearurbackend.dto;
 
+import com.example.hearurbackend.domain.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +11,5 @@ public class UserDTO {
     private String password;
     private String name;
     private String email;
-    private String role;
+    private UserRole role;
 }

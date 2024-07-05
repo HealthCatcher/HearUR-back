@@ -1,5 +1,6 @@
 package com.example.hearurbackend.controller;
 
+import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.AuthRequest;
 import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.service.AuthService;
@@ -74,7 +75,7 @@ public class AuthController {
 
         String username = provider + " " + providerId;
         log.info("username: {}", username);
-        UserEntity newUser = authService.saveUser(username, email, name, "ROLE_USER");
+        UserEntity newUser = authService.saveUser(username, email, name, UserRole.ROLE_USER);
 
         // AuthService를 통해 JWT 토큰 생성 및 반환
         String token = authService.generateJwtToken(newUser.getUsername());

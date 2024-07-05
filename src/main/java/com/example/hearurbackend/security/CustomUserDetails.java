@@ -18,7 +18,7 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
-        collection.add((GrantedAuthority) userEntity::getRole);
+        collection.add((GrantedAuthority) () -> userEntity.getRole().toString());
         return collection;
     }
 

@@ -1,6 +1,7 @@
 package com.example.hearurbackend.service;
 
 
+import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.*;
 import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.repository.UserRepository;
@@ -39,20 +40,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         UserDTO userDTO = new UserDTO();
         if (existData == null) {
             UserEntity userEntity = new UserEntity();
-            userEntity.setUsername(username);
-            userEntity.setEmail(oAuth2Response.getEmail());
-            userEntity.setName(oAuth2Response.getName());
-            userEntity.setRole("ROLE_USER");
-
+            userEntity.createOAuthUser(
+                    username,
+                    oAuth2Response.getEmail(),
+                    oAuth2Response.getName(),
+                    UserRole.ROLE_USER
+            );
             userRepository.save(userEntity);
 
             userDTO.setUsername(username);
             userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole("ROLE_USER");
+            userDTO.setRole(UserRole.ROLE_USER);
         } else {
-            existData.setEmail(oAuth2Response.getEmail());
-            existData.setName(oAuth2Response.getName());
-
+            existData.updateOAuthUser(
+                    oAuth2Response.getEmail(),
+                    oAuth2Response.getName()
+            );
             userRepository.save(existData);
 
             userDTO.setUsername(existData.getUsername());
