@@ -2,7 +2,7 @@ package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.UserDTO;
-import com.example.hearurbackend.entity.UserEntity;
+import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserEntity registerUser(UserDTO userDTO){
+    public User registerUser(UserDTO userDTO){
         if (userRepository.existsByUsername(userDTO.getUsername())) {
             throw new IllegalArgumentException("Given user already exists");
         }
-        UserEntity user = new UserEntity(
+        User user = new User(
                 userDTO.getUsername(),
                 passwordEncoder.encode(userDTO.getPassword()),
                 userDTO.getName(),
@@ -34,12 +34,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserEntity getUser(String username) {
+    public User getUser(String username) {
         return userRepository.findByUsername(username);
     }
 
     public void changePassword(UserDTO userDTO) {
-        UserEntity user = userRepository.findByUsername(userDTO.getUsername());
+        User user = userRepository.findByUsername(userDTO.getUsername());
         if (user == null) {
             throw new IllegalArgumentException("User not found");
         }

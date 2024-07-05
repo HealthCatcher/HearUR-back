@@ -1,6 +1,6 @@
 package com.example.hearurbackend.security;
 
-import com.example.hearurbackend.entity.UserEntity;
+import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userData = userRepository.findByUsername(username);
+        User userData = userRepository.findByUsername(username);
 
         if (userData != null) {
             return new CustomUserDetails(userData);

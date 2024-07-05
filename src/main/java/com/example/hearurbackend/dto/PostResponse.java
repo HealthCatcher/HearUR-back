@@ -1,6 +1,5 @@
 package com.example.hearurbackend.dto;
 
-import com.example.hearurbackend.entity.CommentEntity;
 import lombok.Builder;
 import lombok.Getter;
 

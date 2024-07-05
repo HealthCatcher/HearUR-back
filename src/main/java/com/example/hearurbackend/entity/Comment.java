@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentEntity {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -22,10 +22,10 @@ public class CommentEntity {
     private boolean isUpdated;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private PostEntity post;
+    private Post post;
 
     @Builder
-    public CommentEntity(String content, String author, LocalDateTime createDate, PostEntity post) {
+    public Comment(String content, String author, LocalDateTime createDate, Post post) {
         this.content = content;
         this.author = author;
         this.createDate = createDate;

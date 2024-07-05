@@ -1,8 +1,8 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.dto.CommentDTO;
-import com.example.hearurbackend.entity.CommentEntity;
-import com.example.hearurbackend.entity.PostEntity;
+import com.example.hearurbackend.entity.Comment;
+import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.CommentRepository;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,11 +23,11 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-    public CommentEntity createComment(UUID postId, String username, CommentDTO commentDTO) {
-        PostEntity post = postRepository.findById(postId).orElseThrow(
+    public Comment createComment(UUID postId, String username, CommentDTO commentDTO) {
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("Post not found"));
 
-        CommentEntity newComment = CommentEntity.builder()
+        Comment newComment = Comment.builder()
                 .content(commentDTO.getContent())
                 .author(username)
                 .createDate(LocalDateTime.now())
@@ -38,7 +38,7 @@ public class CommentService {
     }
 
     public void updateComment(String username, UUID commentId, CommentDTO commentDTO) {
-        CommentEntity comment = commentRepository.findById(commentId).orElseThrow(
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("Comment not found"));
 
         if (!comment.getAuthor().equals(username)) {
@@ -50,7 +50,7 @@ public class CommentService {
     }
 
     public void deleteComment(UUID commentId, String username) {
-        CommentEntity comment = commentRepository.findById(commentId).orElseThrow(
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + commentId));
         if (!comment.getAuthor().equals(username)) {
             throw new IllegalArgumentException("You are not the author of this post.");

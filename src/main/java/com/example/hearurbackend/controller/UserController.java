@@ -1,7 +1,7 @@
 package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.UserDTO;
-import com.example.hearurbackend.entity.UserEntity;
+import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class UserController {
             @RequestBody UserDTO userDTO
     ) {
         try {
-            UserEntity newUser = userService.registerUser(userDTO);
+            User newUser = userService.registerUser(userDTO);
             return ResponseEntity.created(URI.create("/users/"+newUser.getUsername())).build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -1,9 +1,6 @@
 package com.example.hearurbackend.dto;
 
-import com.example.hearurbackend.entity.PostEntity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.example.hearurbackend.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,5 +15,5 @@ public class CommentResponse {
     private String author;
     private LocalDateTime createDate;
     private boolean isUpdated;
-    private PostEntity post;
+    private Post post;
 }

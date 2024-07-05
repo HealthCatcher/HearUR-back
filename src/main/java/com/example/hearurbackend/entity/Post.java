@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostEntity {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -22,10 +22,10 @@ public class PostEntity {
     private LocalDateTime updateDate;
     private boolean isUpdated;
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<CommentEntity> comments;
+    private List<Comment> comments;
 
     @Builder
-    public PostEntity(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
+    public Post(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
         this.category = category;
         this.title = title;
         this.content = content;

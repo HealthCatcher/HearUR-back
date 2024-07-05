@@ -2,7 +2,7 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.CommentDTO;
 import com.example.hearurbackend.dto.CustomOAuth2User;
-import com.example.hearurbackend.entity.CommentEntity;
+import com.example.hearurbackend.entity.Comment;
 import com.example.hearurbackend.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,7 +30,7 @@ public class CommentController {
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {
-            CommentEntity newComment = commentService.createComment(postId, auth.getUsername(), commentDTO);
+            Comment newComment = commentService.createComment(postId, auth.getUsername(), commentDTO);
             String commentId = newComment.getId().toString();
             URI postUri = URI.create("/community/post/" + postId + "/comment/" + commentId);
             return ResponseEntity.created(postUri).build();

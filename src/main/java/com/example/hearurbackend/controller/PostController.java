@@ -5,7 +5,7 @@ import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.dto.PostDTO;
 import com.example.hearurbackend.dto.PostResponse;
 
-import com.example.hearurbackend.entity.PostEntity;
+import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,7 +46,7 @@ public class PostController {
             @PathVariable UUID postId
     ) {
         try {
-            PostEntity post = postService.getPost(postId);
+            Post post = postService.getPost(postId);
             List<CommentDTO> commentDTOList = post.getComments().stream()
                     .map(comment -> new CommentDTO(comment.getId(), comment.getAuthor(), comment.getContent(), comment.getCreateDate(), comment.isUpdated()))
                     .toList();
@@ -76,7 +76,7 @@ public class PostController {
             @RequestBody PostDTO postDTO
     ) {
         try {
-            PostEntity newPost = postService.createPost(postDTO, auth.getUsername());
+            Post newPost = postService.createPost(postDTO, auth.getUsername());
             String postId = newPost.getId().toString();
             URI postUri = URI.create("/community/post/" + postId);
             return ResponseEntity.created(postUri).build();
