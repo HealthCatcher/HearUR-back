@@ -90,9 +90,7 @@ public class PostController {
             @RequestBody PostDTO postDTO
     ) {
         try {
-            postService.isAuthor(postId, auth.getUsername());
-            postService.updatePost(postId, postDTO);
-
+            postService.updatePost(postId, postDTO, auth.getUsername());
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -108,8 +106,7 @@ public class PostController {
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {
-            postService.isAuthor(postId, auth.getUsername());
-            postService.deletePost(postId);
+            postService.deletePost(postId, auth.getUsername());
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
