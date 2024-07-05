@@ -32,4 +32,9 @@ public class CommentEntity {
         this.isUpdated = false;
         this.post = post;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+        this.isUpdated = true;
+    }
 }
