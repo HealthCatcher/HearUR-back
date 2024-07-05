@@ -37,4 +37,13 @@ public class UserService {
     public UserEntity getUser(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public void changePassword(UserDTO userDTO) {
+        UserEntity user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepository.save(user);
+    }
 }
