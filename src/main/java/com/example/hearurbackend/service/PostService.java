@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -21,16 +22,26 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<PostEntity> getPostList() {
-        return postRepository.findAll();
+    public void isAuthor(UUID postId, String username) {
+        PostEntity post = postRepository.findById(postId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + postId));
+        if (!post.getAuthor().equals(username)) {
+            throw new IllegalArgumentException("You are not the author of this post.");
+        }
+    }
+
+    public List<PostDTO> getPostList() {
+        List<PostEntity> postEntities = postRepository.findAll();
+        return postEntities.stream()
+                .map(post -> new PostDTO(post.getId(), post.getCategory(), post.getTitle(), post.getAuthor(), post.getCreateDate()))
+                .collect(Collectors.toList());
     }
 
     public PostEntity getPost(UUID postId) {
-        return postRepository.findById(postId).orElse(null);
+        return postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postId));
     }
 
     public PostEntity createPost(PostDTO postDTO, String username) {
-        log.info("서비스 도착 username: {}", username);
         LocalDateTime now = LocalDateTime.now();
         PostEntity post = PostEntity.builder()
                 .title(postDTO.getTitle())
@@ -43,18 +54,14 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public PostEntity updatePost(UUID postId, PostDTO postDTO) {
+    public void updatePost(UUID postId, PostDTO postDTO) {
         PostEntity post = postRepository.findById(postId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postId));
         post.updatePost(postDTO.getTitle(), postDTO.getContent());
-        return postRepository.save(post);
+        postRepository.save(post);
     }
 
-    public void isAuthor(UUID postId, String username) {
-        PostEntity post = postRepository.findById(postId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + postId));
-        if (!post.getAuthor().equals(username)) {
-            throw new IllegalArgumentException("You are not the author of this post.");
-        }
+    public void deletePost(UUID postId) {
+        postRepository.deleteById(postId);
     }
 }
