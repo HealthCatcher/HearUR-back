@@ -9,6 +9,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -20,7 +21,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
-    private static final String senderEmail = "sanbyul1@naver.com";
+    private static final String senderEmail = "master@healthcatcher.net";
 
     public AuthService(JWTUtil jwtUtil,
                        UserRepository userRepository,
@@ -71,10 +72,11 @@ public class AuthService {
         String authCode = createCode();
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        message.addRecipients(MimeMessage.RecipientType.TO, email);
-        message.setSubject("안녕하세요. 인증번호입니다.");
-        message.setFrom(senderEmail);
-        message.setText("인증번호: "+ authCode, "utf-8", "html");
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(email);
+        helper.setSubject("안녕하세요. 인증번호입니다.");
+        helper.setFrom(senderEmail); // 동적으로 발신자 이메일 설정
+        helper.setText("인증번호: "+ authCode, true);
 
         // Redis 에 해당 인증코드 인증 시간 설정
         redisUtil.setDataExpire(email, authCode, 60 * 30L);
@@ -92,11 +94,22 @@ public class AuthService {
 
     public Boolean verifyEmailCode(String email, String code) {
         String codeFoundByEmail = redisUtil.getData(email);
-        redisUtil.deleteData(email);
-        log.info("code found by email: {}", codeFoundByEmail);
         if (codeFoundByEmail == null) {
             return false;
         }
-        return codeFoundByEmail.equals(code);
+        if(codeFoundByEmail.equals(code)) {
+            log.info("code found by email: {}", codeFoundByEmail);
+            redisUtil.deleteData(email);
+            redisUtil.setDataExpire(email, "verified", 60 * 30L);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean isVerified(String email) {
+        if (redisUtil.existData(email)){
+            return redisUtil.getData(email).equals("verified");
+        }
+        return false;
     }
 }
