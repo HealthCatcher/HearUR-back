@@ -93,9 +93,9 @@ public class AuthController {
         return ResponseEntity.ok().headers(responseHeaders).body("{\"code\": \"200\"}");
     }
 
-    @Operation(summary = "JWT 토큰 헤더로 반환")
+    @Operation(summary = "OAuth2 로그인시 jwt 위치 쿠키 -> 헤더 메소드")
     @GetMapping("/jwt")
-    public ResponseEntity<String> getJWT(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> getJWT(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String token = "";
         if (cookies != null) {
@@ -115,18 +115,20 @@ public class AuthController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        JSONObject responseData = new JSONObject();
-        responseData.put("code", "200");
-        return ResponseEntity.ok().headers(headers).body(responseData.toString());
+        return ResponseEntity.ok().headers(headers).build();
     }
 
 
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
-    public ResponseEntity<String> register(
+    public ResponseEntity<?> register(
             @RequestBody UserDTO userDTO
     ) {
         try {
+            //실제 서비스하면 주석 해제
+//            if(!authService.isVerified(userDTO.getUsername())) {
+//                return ResponseEntity.badRequest().body("이메일 인증을 해주세요.");
+//            }
             User newUser = userService.registerUser(userDTO);
             return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
         } catch (Exception e) {
@@ -136,7 +138,7 @@ public class AuthController {
 
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/password")
-    public ResponseEntity<String> changePassword(
+    public ResponseEntity<?> changePassword(
             @RequestBody UserDTO userDTO
     ) {
         try {
@@ -147,12 +149,14 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "이메일 인증 코드 전송")
     @PostMapping("/email/send")
     public ResponseEntity<?> sendMail(EmailDto emailDto) throws MessagingException {
         authService.sendEmail(emailDto.getMail());
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "이메일 인증 코드 확인")
     @PostMapping("/email/verify")
     public ResponseEntity<?> verify(EmailDto emailDto) {
         boolean isVerify = authService.verifyEmailCode(emailDto.getMail(), emailDto.getVerifyCode());
