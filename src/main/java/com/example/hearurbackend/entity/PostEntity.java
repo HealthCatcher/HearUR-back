@@ -14,6 +14,7 @@ public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private String category;
     private String title;
     private String content;
     private String author;
@@ -24,7 +25,8 @@ public class PostEntity {
     private List<CommentEntity> comments;
 
     @Builder
-    public PostEntity(String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
+    public PostEntity(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
+        this.category = category;
         this.title = title;
         this.content = content;
         this.author = author;

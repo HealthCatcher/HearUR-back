@@ -10,6 +10,7 @@ import java.util.UUID;
 @Builder
 public class PostResponse {
     private UUID id;
+    private String category;
     private String title;
     private String content;
     private String author;
