@@ -1,7 +1,6 @@
 package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.CommentDTO;
-import com.example.hearurbackend.dto.CommentResponse;
 import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.entity.CommentEntity;
 import com.example.hearurbackend.service.CommentService;
@@ -42,9 +41,8 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
-    @PutMapping("/post/{postId}/comment/{commentId}")
+    @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(
-            @PathVariable UUID postId,
             @PathVariable UUID commentId,
             @RequestBody CommentDTO commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
@@ -57,14 +55,11 @@ public class CommentController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-
     }
 
     @Operation(summary = "댓글 삭제")
-    @DeleteMapping("/post/{postId}/comment/{commentId}")
+    @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<?> deleteComment(
-            @PathVariable UUID postId,
             @PathVariable UUID commentId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
