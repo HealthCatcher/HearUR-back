@@ -1,14 +1,15 @@
 package com.example.hearurbackend.controller;
 
+import com.example.hearurbackend.dto.CommentDTO;
 import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.dto.PostDTO;
 import com.example.hearurbackend.dto.PostResponse;
+
 import com.example.hearurbackend.entity.PostEntity;
 import com.example.hearurbackend.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/community")
 public class PostController {
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
 
     public PostController(PostService communityService) {
@@ -47,6 +47,9 @@ public class PostController {
     ) {
         try {
             PostEntity post = postService.getPost(postId);
+            List<CommentDTO> commentDTOList = post.getComments().stream()
+                    .map(comment -> new CommentDTO(comment.getId(), comment.getAuthor(), comment.getContent(), comment.getCreateDate(), comment.isUpdated()))
+                    .toList();
             PostResponse responseDTO = PostResponse.builder()
                     .id(post.getId())
                     .category(post.getCategory())
@@ -57,6 +60,7 @@ public class PostController {
                     .updateDate(post.getUpdateDate())
                     .isUpdated(post.isUpdated())
                     .message("Post found successfully")
+                    .comments(commentDTOList)
                     .build();
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {

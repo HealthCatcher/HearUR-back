@@ -2,7 +2,6 @@ package com.example.hearurbackend.oauth2;
 
 import com.example.hearurbackend.dto.CustomOAuth2User;
 import com.example.hearurbackend.jwt.JWTUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,12 +34,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 60L);
 
-        response.addCookie(createCookie("Authorization", token));
+        response.addCookie(createCookie(token));
         response.sendRedirect("http://localhost:3000/");
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
+    private Cookie createCookie(String value) {
+        Cookie cookie = new Cookie("Authorization", value);
         cookie.setMaxAge(60 * 60 * 60);
         //cookie.setSecure(true);
         cookie.setPath("/");
