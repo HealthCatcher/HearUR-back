@@ -4,14 +4,14 @@ import com.example.hearurbackend.dto.UserDTO;
 import com.example.hearurbackend.entity.UserEntity;
 import com.example.hearurbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import java.net.URI;
+
+@RestController
 public class UserController {
     private final UserService userService;
 
@@ -21,20 +21,14 @@ public class UserController {
 
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
-    @ResponseBody
     public ResponseEntity<String> register(
             @RequestBody UserDTO userDTO
     ) {
-        JSONObject responseData = new JSONObject();
         try {
             UserEntity newUser = userService.registerUser(userDTO);
-            responseData.put("status_code", "200");
-            responseData.put("userId", newUser.getUsername());
-            return ResponseEntity.ok().body(responseData.toString());
+            return ResponseEntity.created(URI.create("/users/"+newUser.getUsername())).build();
         } catch (Exception e) {
-            responseData.put("status_code", "400");
-            responseData.put("error", e.toString());
-            return ResponseEntity.badRequest().body(responseData.toString());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
