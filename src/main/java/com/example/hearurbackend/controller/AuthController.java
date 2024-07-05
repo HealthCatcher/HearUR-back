@@ -2,12 +2,16 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.AuthRequest;
-import com.example.hearurbackend.entity.UserEntity;
+import com.example.hearurbackend.dto.EmailDto;
+import com.example.hearurbackend.dto.UserDTO;
+import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.service.AuthService;
+import com.example.hearurbackend.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.Map;
 
 @Controller
@@ -29,10 +34,12 @@ import java.util.Map;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
+    private final UserService userService;
     private final RestTemplate restTemplate;
 
-    public AuthController(AuthService authService, RestTemplate restTemplate) {
+    public AuthController(AuthService authService, UserService userService, RestTemplate restTemplate) {
         this.authService = authService;
+        this.userService = userService;
         this.restTemplate = restTemplate;
     }
 
@@ -75,7 +82,7 @@ public class AuthController {
 
         String username = provider + " " + providerId;
         log.info("username: {}", username);
-        UserEntity newUser = authService.saveUser(username, email, name, UserRole.ROLE_USER);
+        User newUser = authService.saveUser(username, email, name, UserRole.ROLE_USER);
 
         // AuthService를 통해 JWT 토큰 생성 및 반환
         String token = authService.generateJwtToken(newUser.getUsername());
@@ -113,4 +120,42 @@ public class AuthController {
         return ResponseEntity.ok().headers(headers).body(responseData.toString());
     }
 
+
+    @Operation(summary = "회원가입")
+    @PostMapping("/signup")
+    public ResponseEntity<String> register(
+            @RequestBody UserDTO userDTO
+    ) {
+        try {
+            User newUser = userService.registerUser(userDTO);
+            return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "비밀번호 변경")
+    @PostMapping("/password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody UserDTO userDTO
+    ) {
+        try {
+            userService.changePassword(userDTO);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/email/send")
+    public ResponseEntity<?> sendMail(EmailDto emailDto) throws MessagingException {
+        authService.sendEmail(emailDto.getMail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/email/verify")
+    public ResponseEntity<?> verify(EmailDto emailDto) {
+        boolean isVerify = authService.verifyEmailCode(emailDto.getMail(), emailDto.getVerifyCode());
+        return isVerify ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
 }
