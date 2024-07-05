@@ -4,19 +4,16 @@ import com.example.hearurbackend.dto.PostDTO;
 import com.example.hearurbackend.entity.PostEntity;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class PostService {
-    private static final Logger log = LoggerFactory.getLogger(PostService.class);
     private final PostRepository postRepository;
 
     public PostService(PostRepository postRepository) {
@@ -38,6 +35,7 @@ public class PostService {
         LocalDateTime now = LocalDateTime.now();
         PostEntity post = PostEntity.builder()
                 .title(postDTO.getTitle())
+                .category(postDTO.getCategory())
                 .content(postDTO.getContent())
                 .author(username)
                 .createDate(now)

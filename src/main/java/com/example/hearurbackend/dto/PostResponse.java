@@ -1,9 +1,11 @@
 package com.example.hearurbackend.dto;
 
+import com.example.hearurbackend.entity.CommentEntity;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,5 +19,6 @@ public class PostResponse {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     private boolean isUpdated;
+    private List<CommentDTO> comments;
     private String message;
 }
