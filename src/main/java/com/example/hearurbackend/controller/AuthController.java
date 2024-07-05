@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;

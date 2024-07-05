@@ -101,9 +101,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/email/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/community/post").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/community/post/*").permitAll()
+                        .requestMatchers("/api/v1/auth/email/send").permitAll()
+                        .requestMatchers("/api/v1/auth/email/verify").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/community/post").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/community/post/*").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS

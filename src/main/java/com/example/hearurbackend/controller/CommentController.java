@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/api/v1/community")
 public class CommentController {
     private final CommentService commentService;
 

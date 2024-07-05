@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyController {
 
     @Operation(summary = "내 정보")
-    @GetMapping("/my")
+    @GetMapping("/api/v1/my")
     public ResponseEntity<String> myAPI(@AuthenticationPrincipal CustomOAuth2User auth){
 
         return ResponseEntity.ok(auth.getUsername());

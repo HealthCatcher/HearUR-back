@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/api/v1/community")
 public class PostController {
     private final PostService postService;
 
