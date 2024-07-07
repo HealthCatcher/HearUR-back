@@ -23,16 +23,16 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 작성")
-    @PostMapping("/post/{postId}/comment")
+    @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<?> createComment(
-            @PathVariable UUID postId,
+            @PathVariable Long postNo,
             @RequestBody CommentDTO commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {
-            Comment newComment = commentService.createComment(postId, auth.getUsername(), commentDTO);
+            Comment newComment = commentService.createComment(postNo, auth.getUsername(), commentDTO);
             String commentId = newComment.getId().toString();
-            URI postUri = URI.create("/community/post/" + postId + "/comment/" + commentId);
+            URI postUri = URI.create("/community/post/" + postNo + "/comment/" + commentId);
             return ResponseEntity.created(postUri).build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

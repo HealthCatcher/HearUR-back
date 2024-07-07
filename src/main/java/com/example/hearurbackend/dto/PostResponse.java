@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class PostResponse {
-    private UUID id;
+    private Long no;
     private String category;
     private String title;
     private String content;

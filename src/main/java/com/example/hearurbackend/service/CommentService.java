@@ -23,8 +23,8 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-    public Comment createComment(UUID postId, String username, CommentDTO commentDTO) {
-        Post post = postRepository.findById(postId).orElseThrow(
+    public Comment createComment(Long postNo, String username, CommentDTO commentDTO) {
+        Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new IllegalArgumentException("Post not found"));
 
         Comment newComment = Comment.builder()

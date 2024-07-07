@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,12 +22,12 @@ public class PostService {
     public List<PostDTO> getPostList() {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
-                .map(post -> new PostDTO(post.getId(), post.getCategory(), post.getTitle(), post.getAuthor(), post.getCreateDate()))
+                .map(post -> new PostDTO(post.getNo(), post.getCategory(), post.getTitle(), post.getAuthor(), post.getCreateDate()))
                 .collect(Collectors.toList());
     }
 
-    public Post getPost(UUID postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postId));
+    public Post getPost(Long postNo) {
+        return postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
     }
 
     public Post createPost(PostDTO postDTO, String username) {
@@ -45,9 +44,9 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void updatePost(UUID postId, PostDTO postDTO, String username) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + postId));
+    public void updatePost(Long postNo, PostDTO postDTO, String username) {
+        Post post = postRepository.findById(postNo).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {
             throw new IllegalArgumentException("You are not the author of this post.");
         }
@@ -55,12 +54,12 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void deletePost(UUID postId, String username) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + postId));
+    public void deletePost(Long postNo, String username) {
+        Post post = postRepository.findById(postNo).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {
             throw new IllegalArgumentException("You are not the author of this post.");
         }
-        postRepository.deleteById(postId);
+        postRepository.deleteById(postNo);
     }
 }

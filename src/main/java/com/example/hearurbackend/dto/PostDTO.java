@@ -7,15 +7,15 @@ import java.util.UUID;
 
 @Getter
 public class PostDTO {
-    private UUID id;
+    private Long no;
     private String category;
     private String title;
     private String author;
     private String content;
     private LocalDateTime createDate;
 
-    public PostDTO(UUID id, String category, String title, String author, LocalDateTime createDate) {
-        this.id = id;
+    public PostDTO(Long no, String category, String title, String author, LocalDateTime createDate) {
+        this.no = no;
         this.category = category;
         this.title = title;
         this.author = author;

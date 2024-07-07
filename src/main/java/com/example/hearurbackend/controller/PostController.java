@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/community")
@@ -41,17 +40,17 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 상세 조회")
-    @GetMapping("/post/{postId}")
+    @GetMapping("/post/{postNo}")
     public ResponseEntity<?> getPostDetail(
-            @PathVariable UUID postId
+            @PathVariable Long postNo
     ) {
         try {
-            Post post = postService.getPost(postId);
+            Post post = postService.getPost(postNo);
             List<CommentDTO> commentDTOList = post.getComments().stream()
                     .map(comment -> new CommentDTO(comment.getId(), comment.getAuthor(), comment.getContent(), comment.getCreateDate(), comment.isUpdated()))
                     .toList();
             PostResponse responseDTO = PostResponse.builder()
-                    .id(post.getId())
+                    .no(post.getNo())
                     .category(post.getCategory())
                     .title(post.getTitle())
                     .content(post.getContent())
@@ -77,8 +76,8 @@ public class PostController {
     ) {
         try {
             Post newPost = postService.createPost(postDTO, auth.getUsername());
-            String postId = newPost.getId().toString();
-            URI postUri = URI.create("/community/post/" + postId);
+            String postNo = newPost.getNo().toString();
+            URI postUri = URI.create("/community/post/" + postNo);
             return ResponseEntity.created(postUri).build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -87,14 +86,14 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 수정")
-    @PutMapping("/post/{postId}")
+    @PutMapping("/post/{postNo}")
     public ResponseEntity<?> updatePost(
-            @PathVariable UUID postId,
+            @PathVariable Long postNo,
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostDTO postDTO
     ) {
         try {
-            postService.updatePost(postId, postDTO, auth.getUsername());
+            postService.updatePost(postNo, postDTO, auth.getUsername());
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -104,13 +103,13 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 삭제")
-    @DeleteMapping("/post/{postId}")
+    @DeleteMapping("/post/{postNo}")
     public ResponseEntity<?> deletePost(
-            @PathVariable UUID postId,
+            @PathVariable Long postNo,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {
-            postService.deletePost(postId, auth.getUsername());
+            postService.deletePost(postNo, auth.getUsername());
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
