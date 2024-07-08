@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -46,8 +47,12 @@ public class PostController {
     ) {
         Post newPost = postService.createPost(postRequestDto, auth.getUsername());
         String postNo = newPost.getNo().toString();
-        URI postUri = URI.create("/community/post/" + postNo);
-        return ResponseEntity.created(postUri).build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/community/{postNo]}")
+                .buildAndExpand(postNo)
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "게시글 수정")

@@ -32,8 +32,8 @@ public class CommentController {
         String commentId = newComment.getId().toString();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{commentId}")
-                .buildAndExpand(commentId)
+                .path("/community/post/{postNo}/comment/{commentId}")
+                .buildAndExpand(postNo,commentId)
                 .toUri();
         return ResponseEntity.created(location).build();
     }
