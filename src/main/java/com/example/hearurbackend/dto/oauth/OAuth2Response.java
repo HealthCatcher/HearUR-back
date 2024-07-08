@@ -1,4 +1,4 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.oauth;
 
 public interface OAuth2Response {
     String getProvider();

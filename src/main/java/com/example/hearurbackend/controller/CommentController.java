@@ -1,7 +1,7 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.CommentDTO;
-import com.example.hearurbackend.dto.CustomOAuth2User;
+import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.Comment;
 import com.example.hearurbackend.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +26,7 @@ public class CommentController {
     @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<?> createComment(
             @PathVariable Long postNo,
-            @RequestBody CommentDTO commentDTO,
+            @RequestBody CommentDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {
@@ -44,7 +44,7 @@ public class CommentController {
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<String> updateComment(
             @PathVariable UUID commentId,
-            @RequestBody CommentDTO commentDTO,
+            @RequestBody CommentDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         try {

@@ -1,8 +1,8 @@
 package com.example.hearurbackend.jwt;
 
 import com.example.hearurbackend.domain.UserRole;
-import com.example.hearurbackend.dto.CustomOAuth2User;
-import com.example.hearurbackend.dto.UserDTO;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.dto.user.UserDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -65,7 +65,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
         //userDTO를 생성하여 값 set
-        UserDTO userDTO = new UserDTO();
+        UserDto userDTO = new UserDto();
         userDTO.setUsername(username);
         userDTO.setRole(UserRole.valueOf(role));
 

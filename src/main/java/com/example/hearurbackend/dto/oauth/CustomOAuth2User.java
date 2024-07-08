@@ -1,5 +1,6 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.oauth;
 
+import com.example.hearurbackend.dto.user.UserDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -9,9 +10,9 @@ import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User {
 
-    private final UserDTO userDTO;
+    private final UserDto userDTO;
 
-    public CustomOAuth2User(UserDTO userDTO) {
+    public CustomOAuth2User(UserDto userDTO) {
         this.userDTO = userDTO;
     }
 

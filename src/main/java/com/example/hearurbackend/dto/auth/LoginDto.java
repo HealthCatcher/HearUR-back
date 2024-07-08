@@ -1,9 +1,9 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.auth;
 
 import lombok.Getter;
 
 @Getter
-public class LoginDTO {
+public class LoginDto {
     private String username;
     private String password;
 }

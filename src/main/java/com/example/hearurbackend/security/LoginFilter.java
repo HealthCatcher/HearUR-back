@@ -1,6 +1,6 @@
 package com.example.hearurbackend.security;
 
-import com.example.hearurbackend.dto.LoginDTO;
+import com.example.hearurbackend.dto.auth.LoginDto;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -35,7 +35,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         UsernamePasswordAuthenticationToken authToken;
         if (request.getContentType().equals(MimeTypeUtils.APPLICATION_JSON_VALUE)) {
             try {
-                LoginDTO loginDTO = objectMapper.readValue(request.getReader().lines().collect(Collectors.joining()), LoginDTO.class);
+                LoginDto loginDTO = objectMapper.readValue(request.getReader().lines().collect(Collectors.joining()), LoginDto.class);
                 authToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
                 return authenticationManager.authenticate(authToken);
             } catch (Exception e) {

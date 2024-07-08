@@ -1,4 +1,4 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.comment;
 
 import com.example.hearurbackend.entity.Post;
 import lombok.Builder;

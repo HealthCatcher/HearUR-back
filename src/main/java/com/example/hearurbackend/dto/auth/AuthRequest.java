@@ -1,4 +1,4 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.auth;
 
 import lombok.Getter;
 

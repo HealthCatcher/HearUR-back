@@ -1,12 +1,11 @@
-package com.example.hearurbackend.dto;
+package com.example.hearurbackend.dto.post;
 
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
-public class PostDTO {
+public class PostDto {
     private Long no;
     private String category;
     private String title;
@@ -14,7 +13,7 @@ public class PostDTO {
     private String content;
     private LocalDateTime createDate;
 
-    public PostDTO(Long no, String category, String title, String author, LocalDateTime createDate) {
+    public PostDto(Long no, String category, String title, String author, LocalDateTime createDate) {
         this.no = no;
         this.category = category;
         this.title = title;

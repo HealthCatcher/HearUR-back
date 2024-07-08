@@ -2,7 +2,8 @@ package com.example.hearurbackend.service;
 
 
 import com.example.hearurbackend.domain.UserRole;
-import com.example.hearurbackend.dto.*;
+import com.example.hearurbackend.dto.oauth.*;
+import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.repository.UserRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -34,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         User existData = userRepository.findByUsername(username);
-        UserDTO userDTO = new UserDTO();
+        UserDto userDTO = new UserDto();
         if (existData == null) {
             User userEntity = new User();
             userEntity.createOAuthUser(

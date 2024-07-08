@@ -1,6 +1,6 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.dto.CommentDTO;
+import com.example.hearurbackend.dto.comment.CommentDto;
 import com.example.hearurbackend.entity.Comment;
 import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.CommentRepository;
@@ -23,7 +23,7 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-    public Comment createComment(Long postNo, String username, CommentDTO commentDTO) {
+    public Comment createComment(Long postNo, String username, CommentDto commentDTO) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new IllegalArgumentException("Post not found"));
 
@@ -37,7 +37,7 @@ public class CommentService {
         return commentRepository.save(newComment);
     }
 
-    public void updateComment(String username, UUID commentId, CommentDTO commentDTO) {
+    public void updateComment(String username, UUID commentId, CommentDto commentDTO) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("Comment not found"));
 

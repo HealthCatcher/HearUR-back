@@ -1,9 +1,9 @@
 package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.domain.UserRole;
-import com.example.hearurbackend.dto.AuthRequest;
-import com.example.hearurbackend.dto.EmailDto;
-import com.example.hearurbackend.dto.UserDTO;
+import com.example.hearurbackend.dto.auth.AuthRequest;
+import com.example.hearurbackend.dto.auth.EmailDto;
+import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.service.AuthService;
 import com.example.hearurbackend.service.UserService;
@@ -121,7 +121,7 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<?> register(
-            @RequestBody UserDTO userDTO
+            @RequestBody UserDto userDTO
     ) {
         try {
             //실제 서비스하면 주석 해제
@@ -138,7 +138,7 @@ public class AuthController {
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/password")
     public ResponseEntity<?> changePassword(
-            @RequestBody UserDTO userDTO
+            @RequestBody UserDto userDTO
     ) {
         try {
             userService.changePassword(userDTO);
