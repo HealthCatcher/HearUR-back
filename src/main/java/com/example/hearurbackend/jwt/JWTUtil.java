@@ -1,6 +1,8 @@
 package com.example.hearurbackend.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JWTUtil {
 
@@ -19,18 +22,23 @@ public class JWTUtil {
     }
 
     public String getUsername(String token) {
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
     public String getRole(String token) {
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            log.error("Token expired, error: {}", e.getMessage());
+            return true;
+        } catch (Exception e) {
+            log.error("Token invalid, error: {}", e.getMessage());
+            return false;
+        }
     }
 
     public String createJwt(String username, String role, Long expiredMs) {
