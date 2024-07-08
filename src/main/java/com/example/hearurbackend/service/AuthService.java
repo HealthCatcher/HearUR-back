@@ -1,21 +1,34 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
+import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.repository.UserRepository;
 import com.example.hearurbackend.util.RedisUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -27,6 +40,7 @@ public class AuthService {
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
     private static final String senderEmail = "master@healthcatcher.net";
 
 
@@ -129,5 +143,69 @@ public class AuthService {
         User user = userRepository.findById(userDTO.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
+    }
+
+    public String transferJwtFromCookieToHeader(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        if (token.isEmpty()) {
+            throw new IllegalArgumentException("Token not found in cookies");
+        }
+
+        Cookie cookie = new Cookie("Authorization", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return token;
+    }
+
+    public String mobileLogin(AuthRequest request) throws JsonProcessingException {
+        String provider = request.getProvider();
+        String providerId;
+        String email;
+        String name;
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        headers.set("Authorization", "Bearer " + request.getAccessToken());
+
+        // 모바일 앱에서 전송한 인증 정보를 받아서 처리
+        if (request.getProvider().equals("naver")) {
+
+            String userInfoUri = "https://openapi.naver.com/v1/nid/me";
+            ResponseEntity<String> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // JSON 문자열을 Java 객체로 변환
+            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {
+            });
+            String resultCode = (String) jsonMap.get("resultcode");
+
+            // 인증
+            if (resultCode == null || !resultCode.equals("00"))
+                throw new IllegalArgumentException("Invalid access token");
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> responseData = (Map<String, Object>) jsonMap.get("response");
+
+            providerId = (String) responseData.get("id");
+            email = (String) responseData.get("email");
+            name = (String) responseData.get("name");
+        } else {
+            throw new IllegalArgumentException("Unsupported provider");
+        }
+
+        String username = provider + " " + providerId;
+        log.info("username: {}", username);
+        User newUser = saveUser(username, email, name, UserRole.ROLE_USER);
+        return generateJwtToken(newUser.getUsername());
     }
 }
