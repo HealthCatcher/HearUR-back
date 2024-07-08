@@ -7,6 +7,7 @@ import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,7 @@ public class PostService {
 
     }
 
+    @Transactional
     public Post createPost(PostRequestDto postDTO, String username) {
         LocalDateTime now = LocalDateTime.now();
         Post post = Post.builder()
@@ -73,11 +75,12 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional
     public void updatePost(Long postNo, PostRequestDto postDTO, String username) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {
-            throw new IllegalArgumentException("You are not the author of this post.");
+            throw new SecurityException("You are not the author of this post.");
         }
         post.updatePost(postDTO.getTitle(), postDTO.getContent());
         postRepository.save(post);
@@ -87,7 +90,7 @@ public class PostService {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {
-            throw new IllegalArgumentException("You are not the author of this post.");
+            throw new SecurityException("You are not the author of this post.");
         }
         postRepository.deleteById(postNo);
     }

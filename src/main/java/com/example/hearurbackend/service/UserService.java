@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
 
-    @Transactional
     public User getUser(String username) {
         return userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
+    @Transactional
     public void changeNickname(String username, String nickname) {
         User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.changeNickname(nickname);
