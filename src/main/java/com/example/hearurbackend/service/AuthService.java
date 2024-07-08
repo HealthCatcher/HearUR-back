@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
@@ -50,6 +51,7 @@ public class AuthService {
         return jwtUtil.createJwt(username, role, 60 * 60 * 60L);
     }
 
+    @Transactional
     public User saveUser(String username, String email, String name, UserRole role) {
         User user = userRepository.findById(username).orElse(null);
         if (user == null) {
@@ -139,25 +141,22 @@ public class AuthService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void changePassword(UserDto userDTO) {
-        User user = userRepository.findById(userDTO.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userDTO.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
     }
 
     public String transferJwtFromCookieToHeader(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        String token = "";
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("Authorization")) {
-                    token = cookie.getValue();
-                }
-            }
-        }
-        if (token.isEmpty()) {
-            throw new IllegalArgumentException("Token not found in cookies");
-        }
+        String token = Arrays.stream(cookies)
+                .filter(cookie -> "Authorization".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Token not found in cookies"));
+
 
         Cookie cookie = new Cookie("Authorization", null);
         cookie.setMaxAge(0);
@@ -184,12 +183,9 @@ public class AuthService {
             ResponseEntity<String> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
 
-            // JSON 문자열을 Java 객체로 변환
-            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {
-            });
+            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
             String resultCode = (String) jsonMap.get("resultcode");
 
-            // 인증
             if (resultCode == null || !resultCode.equals("00"))
                 throw new IllegalArgumentException("Invalid access token");
 
