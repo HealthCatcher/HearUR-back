@@ -6,6 +6,7 @@ import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.CommentRepository;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
+    @Transactional
     public Comment createComment(Long postNo, String username, CommentDto commentDTO) {
         Post post = postRepository.findById(postNo).orElseThrow(
-                () -> new IllegalArgumentException("Post not found"));
+                () -> new EntityNotFoundException("Post not found"));
 
         Comment newComment = Comment.builder()
                 .content(commentDTO.getContent())
@@ -32,23 +34,25 @@ public class CommentService {
         return commentRepository.save(newComment);
     }
 
+    @Transactional
     public void updateComment(String username, UUID commentId, CommentDto commentDTO) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("Comment not found"));
+                () -> new EntityNotFoundException("Comment not found"));
 
         if (!comment.getAuthor().equals(username)) {
-            throw new IllegalArgumentException("You are not the author of this comment");
+            throw new SecurityException("You are not the author of this comment");
         }
 
         comment.updateComment(commentDTO.getContent());
         commentRepository.save(comment);
     }
 
+    @Transactional
     public void deleteComment(UUID commentId, String username) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + commentId));
         if (!comment.getAuthor().equals(username)) {
-            throw new IllegalArgumentException("You are not the author of this post.");
+            throw new SecurityException("You are not the author of this post.");
         }
         commentRepository.delete(comment);
     }
