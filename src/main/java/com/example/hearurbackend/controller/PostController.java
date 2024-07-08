@@ -1,12 +1,13 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.CommentDTO;
-import com.example.hearurbackend.dto.CustomOAuth2User;
-import com.example.hearurbackend.dto.PostDTO;
-import com.example.hearurbackend.dto.PostResponse;
+import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.dto.post.PostDto;
+import com.example.hearurbackend.dto.post.PostResponse;
 
 import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.service.PostService;
+import com.example.hearurbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -21,16 +22,21 @@ import java.util.List;
 @RequestMapping("/api/v1/community")
 public class PostController {
     private final PostService postService;
+    private final UserService userService;
 
-    public PostController(PostService communityService) {
+    public PostController(
+            PostService communityService,
+            UserService userService
+    ) {
         this.postService = communityService;
+        this.userService = userService;
     }
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping("/post")
     public ResponseEntity<?> getPostList() {
         try {
-            List<PostDTO> postList = postService.getPostList();
+            List<PostDto> postList = postService.getPostList();
             return ResponseEntity.ok(postList);
 
         } catch (EntityNotFoundException e) {
@@ -46,15 +52,15 @@ public class PostController {
     ) {
         try {
             Post post = postService.getPost(postNo);
-            List<CommentDTO> commentDTOList = post.getComments().stream()
-                    .map(comment -> new CommentDTO(comment.getId(), comment.getAuthor(), comment.getContent(), comment.getCreateDate(), comment.isUpdated()))
+            List<CommentDto> commentDTOList = post.getComments().stream()
+                    .map(comment -> new CommentDto(comment.getId(), userService.getUser(comment.getAuthor()).getNickname(), comment.getContent(), comment.getCreateDate(), comment.isUpdated()))
                     .toList();
             PostResponse responseDTO = PostResponse.builder()
                     .no(post.getNo())
                     .category(post.getCategory())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .author(post.getAuthor())
+                    .author(userService.getUser(post.getAuthor()).getNickname())
                     .createDate(post.getCreateDate())
                     .updateDate(post.getUpdateDate())
                     .isUpdated(post.isUpdated())
@@ -72,7 +78,7 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<?> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody PostDTO postDTO
+            @RequestBody PostDto postDTO
     ) {
         try {
             Post newPost = postService.createPost(postDTO, auth.getUsername());
@@ -90,7 +96,7 @@ public class PostController {
     public ResponseEntity<?> updatePost(
             @PathVariable Long postNo,
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody PostDTO postDTO
+            @RequestBody PostDto postDTO
     ) {
         try {
             postService.updatePost(postNo, postDTO, auth.getUsername());

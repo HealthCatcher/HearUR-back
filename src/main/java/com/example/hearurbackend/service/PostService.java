@@ -1,6 +1,6 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.dto.PostDTO;
+import com.example.hearurbackend.dto.post.PostDto;
 import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,15 +14,20 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final UserService userService;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(
+            PostRepository postRepository,
+            UserService userService
+    ) {
         this.postRepository = postRepository;
+        this.userService = userService;
     }
 
-    public List<PostDTO> getPostList() {
+    public List<PostDto> getPostList() {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
-                .map(post -> new PostDTO(post.getNo(), post.getCategory(), post.getTitle(), post.getAuthor(), post.getCreateDate()))
+                .map(post -> new PostDto(post.getNo(), post.getCategory(), post.getTitle(), userService.getUser(post.getAuthor()).getNickname() , post.getCreateDate()))
                 .collect(Collectors.toList());
     }
 
@@ -30,7 +35,7 @@ public class PostService {
         return postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
     }
 
-    public Post createPost(PostDTO postDTO, String username) {
+    public Post createPost(PostDto postDTO, String username) {
         LocalDateTime now = LocalDateTime.now();
         Post post = Post.builder()
                 .title(postDTO.getTitle())
@@ -44,7 +49,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void updatePost(Long postNo, PostDTO postDTO, String username) {
+    public void updatePost(Long postNo, PostDto postDTO, String username) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {
