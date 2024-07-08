@@ -1,41 +1,38 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
+import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.repository.UserRepository;
 import com.example.hearurbackend.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
+    private final BCryptPasswordEncoder passwordEncoder;
     private static final String senderEmail = "master@healthcatcher.net";
 
-    public AuthService(JWTUtil jwtUtil,
-                       UserRepository userRepository,
-                       JavaMailSender javaMailSender,
-                       RedisUtil redisUtil) {
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.javaMailSender = javaMailSender;
-        this.redisUtil = redisUtil;
-    }
 
     public String generateJwtToken(String username) {
         // JWT 토큰 생성 및 반환
-        String role = "ROLE_USER";
+        String role = UserRole.ROLE_USER.toString();
         return jwtUtil.createJwt(username, role, 60 * 60 * 60L);
     }
 
@@ -51,7 +48,6 @@ public class AuthService {
         }
         return userRepository.save(user);
     }
-
 
 
     private String createCode() {
@@ -76,7 +72,7 @@ public class AuthService {
         helper.setTo(email);
         helper.setSubject("안녕하세요. 인증번호입니다.");
         helper.setFrom(senderEmail); // 동적으로 발신자 이메일 설정
-        helper.setText("인증번호: "+ authCode, true);
+        helper.setText("인증번호: " + authCode, true);
 
         // Redis 에 해당 인증코드 인증 시간 설정
         redisUtil.setDataExpire(email, authCode, 60 * 30L);
@@ -97,7 +93,7 @@ public class AuthService {
         if (codeFoundByEmail == null) {
             return false;
         }
-        if(codeFoundByEmail.equals(code)) {
+        if (codeFoundByEmail.equals(code)) {
             log.info("code found by email: {}", codeFoundByEmail);
             redisUtil.deleteData(email);
             redisUtil.setDataExpire(email, "verified", 60 * 30L);
@@ -107,9 +103,33 @@ public class AuthService {
     }
 
     public Boolean isVerified(String email) {
-        if (redisUtil.existData(email)){
+        if (redisUtil.existData(email)) {
             return redisUtil.getData(email).equals("verified");
         }
         return false;
+    }
+
+    @Transactional
+    public User registerUser(UserDto userDTO) {
+        if (userRepository.existsByUsername(userDTO.getUsername())) {
+            throw new IllegalArgumentException("Given user already exists");
+        }
+        User user = new User(
+                userDTO.getUsername(),
+                passwordEncoder.encode(userDTO.getPassword()),
+                userDTO.getName(),
+                userDTO.getUsername(),
+                UserRole.ROLE_USER
+        );
+        return userRepository.save(user);
+    }
+
+    public void changePassword(UserDto userDTO) {
+        User user = userRepository.findByUsername(userDTO.getUsername());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
+        userRepository.save(user);
     }
 }

@@ -15,6 +15,8 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -28,20 +30,14 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthService authService;
-    private final UserService userService;
     private final RestTemplate restTemplate;
-
-    public AuthController(AuthService authService, UserService userService, RestTemplate restTemplate) {
-        this.authService = authService;
-        this.userService = userService;
-        this.restTemplate = restTemplate;
-    }
-
     @Operation(summary = "안드로이드 앱 소셜 로그인 처리")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest request) throws JsonProcessingException {
@@ -123,16 +119,13 @@ public class AuthController {
     public ResponseEntity<?> register(
             @RequestBody UserDto userDTO
     ) {
-        try {
-            //실제 서비스하면 주석 해제
+        //실제 서비스하면 주석 해제
 //            if(!authService.isVerified(userDTO.getUsername())) {
 //                return ResponseEntity.badRequest().body("이메일 인증을 해주세요.");
 //            }
-            User newUser = userService.registerUser(userDTO);
-            return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        User newUser = authService.registerUser(userDTO);
+        return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
+
     }
 
     @Operation(summary = "비밀번호 변경")
@@ -140,12 +133,8 @@ public class AuthController {
     public ResponseEntity<?> changePassword(
             @RequestBody UserDto userDTO
     ) {
-        try {
-            userService.changePassword(userDTO);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        authService.changePassword(userDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "이메일 인증 코드 전송")

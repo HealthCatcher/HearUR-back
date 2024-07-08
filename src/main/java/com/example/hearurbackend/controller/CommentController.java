@@ -6,70 +6,57 @@ import com.example.hearurbackend.entity.Comment;
 import com.example.hearurbackend.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/community")
 public class CommentController {
     private final CommentService commentService;
 
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
-
     @Operation(summary = "댓글 작성")
     @PostMapping("/post/{postNo}/comment")
-    public ResponseEntity<?> createComment(
+    public ResponseEntity<Void> createComment(
             @PathVariable Long postNo,
-            @RequestBody CommentDto commentDTO,
+            @RequestBody @Valid CommentDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        try {
-            Comment newComment = commentService.createComment(postNo, auth.getUsername(), commentDTO);
-            String commentId = newComment.getId().toString();
-            URI postUri = URI.create("/community/post/" + postNo + "/comment/" + commentId);
-            return ResponseEntity.created(postUri).build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
+        Comment newComment = commentService.createComment(postNo, auth.getUsername(), commentDTO);
+        String commentId = newComment.getId().toString();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{commentId}")
+                .buildAndExpand(commentId)
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "댓글 수정")
     @PutMapping("/comment/{commentId}")
-    public ResponseEntity<String> updateComment(
+    public ResponseEntity<Void> updateComment(
             @PathVariable UUID commentId,
-            @RequestBody CommentDto commentDTO,
+            @RequestBody @Valid CommentDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        try {
-            commentService.updateComment(auth.getUsername(), commentId, commentDTO);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        commentService.updateComment(auth.getUsername(), commentId, commentDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "댓글 삭제")
     @DeleteMapping("/comment/{commentId}")
-    public ResponseEntity<?> deleteComment(
+    public ResponseEntity<Void> deleteComment(
             @PathVariable UUID commentId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        try {
-            commentService.deleteComment(commentId, auth.getUsername());
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        commentService.deleteComment(commentId, auth.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }

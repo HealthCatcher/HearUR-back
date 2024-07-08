@@ -1,6 +1,8 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.dto.post.PostDto;
+import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.post.PostRequestDto;
+import com.example.hearurbackend.dto.post.PostResponseDto;
 import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,18 +26,46 @@ public class PostService {
         this.userService = userService;
     }
 
-    public List<PostDto> getPostList() {
+    public List<PostResponseDto> getPostList() {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
-                .map(post -> new PostDto(post.getNo(), post.getCategory(), post.getTitle(), userService.getUser(post.getAuthor()).getNickname() , post.getCreateDate()))
+                .map(post ->
+                        PostResponseDto.builder()
+                                .no(post.getNo())
+                                .category(post.getCategory())
+                                .title(post.getTitle())
+                                .author(userService.getUser(post.getAuthor()).getNickname())
+                                .createDate(post.getCreateDate())
+                                .build()
+                )
                 .collect(Collectors.toList());
     }
 
-    public Post getPost(Long postNo) {
-        return postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
+    public PostResponseDto getPostDetail(Long postNo) {
+        Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
+        List<CommentDto> commentDTOList = post.getComments().stream()
+                .map(comment -> new CommentDto(comment.getId(),
+                        userService.getUser(comment.getAuthor()).getNickname(),
+                        comment.getContent(),
+                        comment.getCreateDate(),
+                        comment.isUpdated()))
+                .toList();
+
+        return PostResponseDto.builder()
+                .no(post.getNo())
+                .category(post.getCategory())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .author(userService.getUser(post.getAuthor()).getNickname())
+                .createDate(post.getCreateDate())
+                .updateDate(post.getUpdateDate())
+                .isUpdated(post.isUpdated())
+                .comments(commentDTOList)
+                .build();
+
     }
 
-    public Post createPost(PostDto postDTO, String username) {
+    public Post createPost(PostRequestDto postDTO, String username) {
         LocalDateTime now = LocalDateTime.now();
         Post post = Post.builder()
                 .title(postDTO.getTitle())
@@ -49,7 +79,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void updatePost(Long postNo, PostDto postDTO, String username) {
+    public void updatePost(Long postNo, PostRequestDto postDTO, String username) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
         if (!post.getAuthor().equals(username)) {

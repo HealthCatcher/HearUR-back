@@ -1,0 +1,34 @@
+package com.example.hearurbackend.dto.post;
+
+import com.example.hearurbackend.dto.comment.CommentDto;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+public class PostResponseDto {
+    private final Long no;
+    private final String category;
+    private final String title;
+    private final String content;
+    private final String author;
+    private final LocalDateTime createDate;
+    private final LocalDateTime updateDate;
+    private final boolean isUpdated;
+    private final List<CommentDto> comments;
+
+    @Builder
+    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentDto> comments) {
+        this.no = no;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.isUpdated = isUpdated;
+        this.comments = comments;
+    }
+}
