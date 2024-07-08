@@ -6,6 +6,7 @@ import com.example.hearurbackend.dto.oauth.*;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -13,12 +14,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
-
-    public CustomOAuth2UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -34,7 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
         }
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
-        User existData = userRepository.findByUsername(username);
+        User existData = userRepository.findById(username).orElse(null);
         UserDto userDTO = new UserDto();
         if (existData == null) {
             User userEntity = new User();

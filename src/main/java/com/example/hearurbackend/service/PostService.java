@@ -7,6 +7,7 @@ import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,17 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
-
-    public PostService(
-            PostRepository postRepository,
-            UserService userService
-    ) {
-        this.postRepository = postRepository;
-        this.userService = userService;
-    }
 
     public List<PostResponseDto> getPostList() {
         List<Post> postEntities = postRepository.findAll();

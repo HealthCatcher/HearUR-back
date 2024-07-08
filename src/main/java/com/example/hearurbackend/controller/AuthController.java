@@ -6,7 +6,6 @@ import com.example.hearurbackend.dto.auth.EmailDto;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.User;
 import com.example.hearurbackend.service.AuthService;
-import com.example.hearurbackend.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,8 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,6 +36,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final RestTemplate restTemplate;
+
     @Operation(summary = "안드로이드 앱 소셜 로그인 처리")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest request) throws JsonProcessingException {

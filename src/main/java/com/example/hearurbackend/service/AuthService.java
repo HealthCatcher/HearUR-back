@@ -37,7 +37,7 @@ public class AuthService {
     }
 
     public User saveUser(String username, String email, String name, UserRole role) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findById(username).orElse(null);
         if (user == null) {
             // 새로운 사용자 생성
             user = new User();
@@ -111,7 +111,8 @@ public class AuthService {
 
     @Transactional
     public User registerUser(UserDto userDTO) {
-        if (userRepository.existsByUsername(userDTO.getUsername())) {
+
+        if (userRepository.existsById(userDTO.getUsername())) {
             throw new IllegalArgumentException("Given user already exists");
         }
         User user = new User(
@@ -125,10 +126,7 @@ public class AuthService {
     }
 
     public void changePassword(UserDto userDTO) {
-        User user = userRepository.findByUsername(userDTO.getUsername());
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
+        User user = userRepository.findById(userDTO.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
     }

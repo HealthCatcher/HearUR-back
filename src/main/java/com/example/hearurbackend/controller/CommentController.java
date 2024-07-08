@@ -5,7 +5,6 @@ import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.Comment;
 import com.example.hearurbackend.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -8,28 +8,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
-    private final User userEntity;
+    private final User user;
 
     public CustomUserDetails(User userEntity) {
-        this.userEntity = userEntity;
+        this.user = userEntity;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
-        collection.add((GrantedAuthority) () -> userEntity.getRole().toString());
+        collection.add((GrantedAuthority) () -> user.getRole().toString());
         return collection;
     }
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return user.getUsername();
     }
 
     @Override

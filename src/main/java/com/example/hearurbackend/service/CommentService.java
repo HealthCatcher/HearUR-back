@@ -6,22 +6,17 @@ import com.example.hearurbackend.entity.Post;
 import com.example.hearurbackend.repository.CommentRepository;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-
-    public CommentService(CommentRepository commentRepository,
-                          PostRepository postRepository
-    ) {
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-    }
 
     public Comment createComment(Long postNo, String username, CommentDto commentDTO) {
         Post post = postRepository.findById(postNo).orElseThrow(
