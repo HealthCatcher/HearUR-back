@@ -12,11 +12,11 @@ public class Like {
     private Long no;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "username", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "post_no", nullable = false)
+    @JoinColumn(name = "post", nullable = false)
     private Post post;
 
     public Like(User user, Post post) {
