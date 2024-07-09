@@ -1,5 +1,6 @@
 package com.example.hearurbackend.oauth2;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
@@ -8,48 +9,125 @@ import org.springframework.stereotype.Component;
 @Component
 public class SocialClientRegistration {
 
+    @Value("${naver.client.id}")
+    private String naverClientId;
+
+    @Value("${naver.client.secret}")
+    private String naverClientSecret;
+
+    @Value("${naver.redirect.uri}")
+    private String naverRedirectUri;
+
+    @Value("${naver.scope}")
+    private String[] naverScopes;
+
+    @Value("${naver.authorization.uri}")
+    private String naverAuthorizationUri;
+
+    @Value("${naver.token.uri}")
+    private String naverTokenUri;
+
+    @Value("${naver.userinfo.uri}")
+    private String naverUserInfoUri;
+
+    @Value("${naver.username.attribute}")
+    private String naverUserNameAttribute;
+
+    @Value("${google.client.id}")
+    private String googleClientId;
+
+    @Value("${google.client.secret}")
+    private String googleClientSecret;
+
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUri;
+
+    @Value("${google.scope}")
+    private String[] googleScopes;
+
+    @Value("${google.authorization.uri}")
+    private String googleAuthorizationUri;
+
+    @Value("${google.token.uri}")
+    private String googleTokenUri;
+
+    @Value("${google.jwkset.uri}")
+    private String googleJwkSetUri;
+
+    @Value("${google.issuer.uri}")
+    private String googleIssuerUri;
+
+    @Value("${google.userinfo.uri}")
+    private String googleUserInfoUri;
+
+    @Value("${google.username.attribute}")
+    private String googleUserNameAttribute;
+
+    @Value("${kakao.client.id}")
+    private String kakaoClientId;
+
+    @Value("${kakao.redirect.uri}")
+    private String kakaoRedirectUri;
+
+    @Value("${kakao.scope}")
+    private String[] kakaoScopes;
+
+    @Value("${kakao.authorization.uri}")
+    private String kakaoAuthorizationUri;
+
+    @Value("${kakao.token.uri}")
+    private String kakaoTokenUri;
+
+    @Value("${kakao.issuer.uri}")
+    private String kakaoIssuerUri;
+
+    @Value("${kakao.userinfo.uri}")
+    private String kakaoUserInfoUri;
+
+    @Value("${kakao.username.attribute}")
+    private String kakaoUserNameAttribute;
+
     public ClientRegistration naverClientRegistration() {
         return ClientRegistration.withRegistrationId("naver")
-                .clientId("fGMii6y0U1sRNvOt5AMw")
-                .clientSecret("KEXtf34wxd")
-                .redirectUri("http://localhost:8080/login/oauth2/code/naver")
+                .clientId(naverClientId)
+                .clientSecret(naverClientSecret)
+                .redirectUri(naverRedirectUri)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope("name", "email")
-                .authorizationUri("https://nid.naver.com/oauth2.0/authorize")
-                .tokenUri("https://nid.naver.com/oauth2.0/token")
-                .userInfoUri("https://openapi.naver.com/v1/nid/me")
-                .userNameAttributeName("response")
+                .scope(naverScopes)
+                .authorizationUri(naverAuthorizationUri)
+                .tokenUri(naverTokenUri)
+                .userInfoUri(naverUserInfoUri)
+                .userNameAttributeName(naverUserNameAttribute)
                 .build();
     }
 
     public ClientRegistration googleClientRegistration() {
         return ClientRegistration.withRegistrationId("google")
-                .clientId("97180559241-8u2jhuuua4ci0vb434kdu8m371qovf34.apps.googleusercontent.com")
-                .clientSecret("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")
-                .redirectUri("http://localhost:8080/login/oauth2/code/google")
+                .clientId(googleClientId)
+                .clientSecret(googleClientSecret)
+                .redirectUri(googleRedirectUri)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope("profile", "email")
-                .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
-                .tokenUri("https://www.googleapis.com/oauth2/v4/token")
-                .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
-                .issuerUri("https://accounts.google.com")
-                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-                .userNameAttributeName(IdTokenClaimNames.SUB)
+                .scope(googleScopes)
+                .authorizationUri(googleAuthorizationUri)
+                .tokenUri(googleTokenUri)
+                .jwkSetUri(googleJwkSetUri)
+                .issuerUri(googleIssuerUri)
+                .userInfoUri(googleUserInfoUri)
+                .userNameAttributeName(googleUserNameAttribute)
                 .build();
     }
 
     public ClientRegistration kakaoClientRegistration() {
         return ClientRegistration.withRegistrationId("kakao")
-                .clientId("ca10ce0ac9ca9af4f407dc5203ecbca7")
-                //.clientSecret("O6O8V0dj9UUNpMfkGxPlj00iZeIU9JLy")
-                .redirectUri("http://localhost:8080/login/oauth2/code/kakao")
+                .clientId(kakaoClientId)
+                .redirectUri(kakaoRedirectUri)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope("profile_nickname")
-                .authorizationUri("https://kauth.kakao.com/oauth/authorize")
-                .tokenUri("https://kauth.kakao.com/oauth/token")
-                .issuerUri("https://kauth.kakao.com")
-                .userInfoUri("https://kapi.kakao.com/v2/user/me")
-                .userNameAttributeName("id")
+                .scope(kakaoScopes)
+                .authorizationUri(kakaoAuthorizationUri)
+                .tokenUri(kakaoTokenUri)
+                .issuerUri(kakaoIssuerUri)
+                .userInfoUri(kakaoUserInfoUri)
+                .userNameAttributeName(kakaoUserNameAttribute)
                 .build();
     }
 }
