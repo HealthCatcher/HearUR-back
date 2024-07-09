@@ -51,11 +51,16 @@ public class PostService {
         post.increaseViews();
         postRepository.save(post);
         List<CommentDto> commentDTOList = post.getComments().stream()
-                .map(comment -> new CommentDto(comment.getId(),
-                        userService.getUser(comment.getAuthor()).get().getNickname(),
-                        comment.getContent(),
-                        comment.getCreateDate(),
-                        comment.isUpdated()))
+                .map(comment -> {
+                    Optional<User> userOptional = userService.getUser(comment.getAuthor());
+                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
+                    return new CommentDto(
+                            comment.getId(),
+                            authorNickname,
+                            comment.getContent(),
+                            comment.getCreateDate(),
+                            comment.isUpdated());
+                })
                 .toList();
 
         Optional<User> userOptional = userService.getUser(post.getAuthor());
