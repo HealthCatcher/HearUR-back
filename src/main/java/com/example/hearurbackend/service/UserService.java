@@ -7,14 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getUser(String username) {
-        return userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public Optional<User> getUser(String username) {
+        return userRepository.findById(username);
     }
 
     @Transactional

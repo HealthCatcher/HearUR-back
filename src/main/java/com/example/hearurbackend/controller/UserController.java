@@ -18,7 +18,7 @@ public class UserController {
 
     @Operation(summary = "별명 변경")
     @PutMapping("/nickname")
-    public ResponseEntity<?> changeNickname(
+    public ResponseEntity<Void> changeNickname(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody UserDto userDTO
     ) {
