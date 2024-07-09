@@ -41,7 +41,7 @@ public class PostController {
 
     @Operation(summary = "게시글 작성")
     @PostMapping("/post")
-    public ResponseEntity<?> createPost(
+    public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostRequestDto postRequestDto
     ) {
@@ -57,7 +57,7 @@ public class PostController {
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/post/{postNo}")
-    public ResponseEntity<?> updatePost(
+    public ResponseEntity<Void> updatePost(
             @PathVariable Long postNo,
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostRequestDto postRequestDto
@@ -68,11 +68,31 @@ public class PostController {
 
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/post/{postNo}")
-    public ResponseEntity<?> deletePost(
+    public ResponseEntity<Void> deletePost(
             @PathVariable Long postNo,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         postService.deletePost(postNo, auth.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "게시글 좋아요 추가")
+    @PostMapping("/post/{postNo}/like")
+    public ResponseEntity<Void> likePost(
+            @PathVariable Long postNo,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        postService.addLike(postNo, auth.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "게시글 좋아요 취소")
+    @DeleteMapping("/post/{postNo}/like")
+    public ResponseEntity<Void> unlikePost(
+            @PathVariable Long postNo,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        postService.removeLike(postNo, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

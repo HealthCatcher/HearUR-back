@@ -3,7 +3,10 @@ package com.example.hearurbackend.service;
 import com.example.hearurbackend.dto.comment.CommentDto;
 import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.dto.post.PostResponseDto;
+import com.example.hearurbackend.entity.Like;
 import com.example.hearurbackend.entity.Post;
+import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.repository.LikeRepository;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,44 +24,56 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
+    private final LikeRepository likeRepository;
 
     public List<PostResponseDto> getPostList() {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
-                .map(post ->
-                        PostResponseDto.builder()
-                                .no(post.getNo())
-                                .category(post.getCategory())
-                                .title(post.getTitle())
-                                .author(userService.getUser(post.getAuthor()).getNickname())
-                                .createDate(post.getCreateDate())
-                                .build()
-                )
+                .map(post -> {
+                    Optional<User> userOptional = userService.getUser(post.getAuthor());
+                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
+
+                    return PostResponseDto.builder()
+                            .no(post.getNo())
+                            .category(post.getCategory())
+                            .title(post.getTitle())
+                            .author(authorNickname)
+                            .createDate(post.getCreateDate())
+                            .views(post.getViews())
+                            .likes(post.getLikesCount())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     public PostResponseDto getPostDetail(Long postNo) {
         Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
+        post.increaseViews();
+        postRepository.save(post);
         List<CommentDto> commentDTOList = post.getComments().stream()
                 .map(comment -> new CommentDto(comment.getId(),
-                        userService.getUser(comment.getAuthor()).getNickname(),
+                        userService.getUser(comment.getAuthor()).get().getNickname(),
                         comment.getContent(),
                         comment.getCreateDate(),
                         comment.isUpdated()))
                 .toList();
+
+        Optional<User> userOptional = userService.getUser(post.getAuthor());
+        String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
 
         return PostResponseDto.builder()
                 .no(post.getNo())
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .author(userService.getUser(post.getAuthor()).getNickname())
+                .author(authorNickname)
                 .createDate(post.getCreateDate())
                 .updateDate(post.getUpdateDate())
                 .isUpdated(post.isUpdated())
                 .comments(commentDTOList)
+                .views(post.getViews())
+                .likes(post.getLikesCount())
                 .build();
-
     }
 
     @Transactional
@@ -93,5 +109,24 @@ public class PostService {
             throw new SecurityException("You are not the author of this post.");
         }
         postRepository.deleteById(postNo);
+    }
+
+    public void addLike(Long postNo, String username) {
+        Post post = postRepository.findById(postNo).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + postNo));
+        User user = userService.getUser(username).orElseThrow(
+                () -> new EntityNotFoundException("User not found with id: " + username));
+        Like like = new Like(user, post);
+        likeRepository.save(like);
+    }
+
+    public void removeLike(Long postNo, String username) {
+        Post post = postRepository.findById(postNo).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + postNo));
+        User user = userService.getUser(username).orElseThrow(
+                () -> new EntityNotFoundException("User not found with id: " + username));
+        Like like = likeRepository.findByUserAndPost(user, post).orElseThrow(
+                () -> new EntityNotFoundException("Like not found with post id: " + postNo + " and user id: " + user.getUsername()));
+        likeRepository.delete(like);
     }
 }
