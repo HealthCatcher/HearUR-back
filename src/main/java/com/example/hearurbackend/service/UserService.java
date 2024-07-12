@@ -1,6 +1,6 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.hearurbackend.repository;
 
-import com.example.hearurbackend.entity.Comment;
+import com.example.hearurbackend.entity.community.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

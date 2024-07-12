@@ -4,7 +4,7 @@ import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.dto.post.PostResponseDto;
 
-import com.example.hearurbackend.entity.Post;
+import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 

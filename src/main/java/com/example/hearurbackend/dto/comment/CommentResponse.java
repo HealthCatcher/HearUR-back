@@ -1,6 +1,6 @@
 package com.example.hearurbackend.dto.comment;
 
-import com.example.hearurbackend.entity.Post;
+import com.example.hearurbackend.entity.community.Post;
 import lombok.Builder;
 import lombok.Getter;
 

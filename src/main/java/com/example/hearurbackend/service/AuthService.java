@@ -3,7 +3,7 @@ package com.example.hearurbackend.service;
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.user.UserDto;
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.repository.UserRepository;
 import com.example.hearurbackend.util.RedisUtil;

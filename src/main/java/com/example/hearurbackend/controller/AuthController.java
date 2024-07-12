@@ -3,7 +3,7 @@ package com.example.hearurbackend.controller;
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.auth.EmailDto;
 import com.example.hearurbackend.dto.user.UserDto;
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,5 +1,6 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.community;
 
+import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

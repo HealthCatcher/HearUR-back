@@ -1,6 +1,6 @@
 package com.example.hearurbackend.security;
 
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

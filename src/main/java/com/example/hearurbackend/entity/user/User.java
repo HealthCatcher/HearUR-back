@@ -1,6 +1,12 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.user;
 
 import com.example.hearurbackend.domain.UserRole;
+import com.example.hearurbackend.entity.community.Comment;
+import com.example.hearurbackend.entity.community.Like;
+import com.example.hearurbackend.entity.diagnosis.MentalHealth;
+import com.example.hearurbackend.entity.community.Post;
+import com.example.hearurbackend.entity.diagnosis.HealthRecord;
+import com.example.hearurbackend.entity.diagnosis.Lifestyle;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

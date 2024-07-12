@@ -1,5 +1,6 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.diagnosis;
 
+import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

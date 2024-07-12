@@ -2,7 +2,7 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.comment.CommentDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.entity.Comment;
+import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

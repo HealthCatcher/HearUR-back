@@ -4,7 +4,7 @@ package com.example.hearurbackend.service;
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.oauth.*;
 import com.example.hearurbackend.dto.user.UserDto;
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

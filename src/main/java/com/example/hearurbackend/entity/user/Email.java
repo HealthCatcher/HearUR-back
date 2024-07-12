@@ -1,4 +1,4 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.user;
 
 import jakarta.persistence.*;
 import lombok.Builder;

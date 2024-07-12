@@ -1,8 +1,8 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.dto.comment.CommentDto;
-import com.example.hearurbackend.entity.Comment;
-import com.example.hearurbackend.entity.Post;
+import com.example.hearurbackend.entity.community.Comment;
+import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.repository.CommentRepository;
 import com.example.hearurbackend.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;

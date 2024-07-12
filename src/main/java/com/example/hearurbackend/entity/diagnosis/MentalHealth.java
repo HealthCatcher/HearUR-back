@@ -1,11 +1,12 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.diagnosis;
 
+import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 
 import java.util.UUID;
 
 @Entity
-public class Lifestyle {
+public class MentalHealth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -15,15 +16,9 @@ public class Lifestyle {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String exerciseFrequency;
+    private Integer stressLevel;
 
-    private String dietaryHabits;
-
-    private Float sleepDuration;
-
-    private Boolean smokingStatus;
-
-    private String alcoholConsumption;
+    private String moodStatus;
 
     // Getters and Setters
 }

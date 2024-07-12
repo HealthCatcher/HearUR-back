@@ -1,5 +1,6 @@
-package com.example.hearurbackend.entity;
+package com.example.hearurbackend.entity.community;
 
+import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Entity

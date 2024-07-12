@@ -1,6 +1,6 @@
 package com.example.hearurbackend.security;
 
-import com.example.hearurbackend.entity.User;
+import com.example.hearurbackend.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
