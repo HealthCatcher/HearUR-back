@@ -51,7 +51,6 @@ public class AuthService {
         return jwtUtil.createJwt(username, role, 60 * 60 * 60L);
     }
 
-    @Transactional
     public User saveUser(String username, String email, String name, UserRole role) {
         User user = userRepository.findById(username).orElse(null);
         if (user == null) {
@@ -203,5 +202,11 @@ public class AuthService {
         log.info("username: {}", username);
         User newUser = saveUser(username, email, name, UserRole.ROLE_USER);
         return generateJwtToken(newUser.getUsername());
+    }
+
+    public boolean verifyPassword(String username, String password) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return passwordEncoder.matches(password, user.getPassword());
     }
 }

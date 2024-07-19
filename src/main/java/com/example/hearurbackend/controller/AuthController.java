@@ -2,6 +2,7 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.auth.EmailDto;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.service.AuthService;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +62,16 @@ public class AuthController {
         User newUser = authService.registerUser(userDTO);
         return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
 
+    }
+
+    @Operation(summary = "비밀번호 검증")
+    @PostMapping("/password/verify")
+    public ResponseEntity<?> verifyPassword(
+            @RequestBody UserDto userDTO,
+            @AuthenticationPrincipal CustomOAuth2User user
+    ) {
+        boolean isCorrect = authService.verifyPassword(userDTO.getPassword(), user.getUsername());
+        return isCorrect ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @Operation(summary = "비밀번호 변경")
