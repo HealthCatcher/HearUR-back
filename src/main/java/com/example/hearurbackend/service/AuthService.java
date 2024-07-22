@@ -48,7 +48,7 @@ public class AuthService {
     public String generateJwtToken(String username) {
         // JWT 토큰 생성 및 반환
         String role = UserRole.ROLE_USER.toString();
-        return jwtUtil.createJwt(username, role, 60 * 60 * 60L);
+        return jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
     }
 
     public User saveUser(String username, String email, String name, UserRole role) {
