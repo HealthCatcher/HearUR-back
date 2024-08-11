@@ -2,12 +2,14 @@ package com.example.hearurbackend.entity.experience;
 
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 @Entity
 public class ExperienceNotice {
     @Id
