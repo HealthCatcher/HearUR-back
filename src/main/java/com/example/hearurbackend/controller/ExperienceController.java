@@ -1,10 +1,10 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.experience.ExperienceResponseDto;
 import com.example.hearurbackend.dto.experience.NoticeRequestDto;
+import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.post.PostRequestDto;
-import com.example.hearurbackend.entity.community.Post;
+import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.service.ExperienceService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,60 +24,55 @@ public class ExperienceController {
     private final ExperienceService experienceService;
 
     @Operation(summary = "체험단 공고 목록 조회")
-    @GetMapping("/experience")
-    public ResponseEntity<List<ExperienceResponseDto>> getNoticeList() {
-        //List<ExperienceResponseDto> noticeList = experienceService.getNoticeList();
-        //return ResponseEntity.ok(noticeList);
-        return null;
+    @GetMapping("/notice")
+    public ResponseEntity<List<NoticeResponseDto>> getNoticeList() {
+        List<NoticeResponseDto> noticeList = experienceService.getNoticeList();
+        return ResponseEntity.ok(noticeList);
     }
 
     @Operation(summary = "체험단 공고 상세 조회")
-    @GetMapping("/experience/{noticeNo}")
-    public ResponseEntity<ExperienceResponseDto> getNoticeDetail(
-            @PathVariable Long noticeNo
+    @GetMapping("/notice/{noticeId}")
+    public ResponseEntity<NoticeResponseDto> getNoticeDetail(
+            @PathVariable UUID noticeId
     ) {
-        //ExperienceResponseDto responseDTO = experienceService.getNoticeDetail(noticeNo);
-        //return ResponseEntity.ok(responseDTO);
-        return null;
+        NoticeResponseDto responseDTO = experienceService.getNoticeDetail(noticeId);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Operation(summary = "체험단 공고 작성")
-    @PostMapping("/experience")
+    @PostMapping("/notice")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody NoticeRequestDto noticeRequestDto
+            @RequestBody NoticeResponseDto noticeRequestDto
     ) {
-//        Post newPost = experienceService.createNotice(noticeRequestDto, auth.getUsername());
-//        String postNo = newPost.getNo().toString();
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/community/{postNo]}")
-//                .buildAndExpand(postNo)
-//                .toUri();
-//        return ResponseEntity.created(location).build();
-        return null;
+        Notice newNotice = experienceService.createNotice(noticeRequestDto, auth.getUsername());
+        String noticeId = newNotice.getId().toString();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/community/{noticeId}")
+                .buildAndExpand(noticeId)
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "게시글 수정")
-    @PutMapping("/experience/{noticeNo}")
+    @PutMapping("/notice/{noticeId}")
     public ResponseEntity<Void> updatePost(
-            @PathVariable Long postNo,
+            @PathVariable UUID noticeId,
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody PostRequestDto postRequestDto
+            @RequestBody NoticeRequestDto noticeRequestDto
     ) {
-//        experienceService.updateNotice(postNo, postRequestDto, auth.getUsername());
-//        return ResponseEntity.noContent().build();
-        return null;
+        experienceService.updateNotice(noticeId, noticeRequestDto, auth.getUsername());
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "게시글 삭제")
-    @DeleteMapping("/experience/{noticeNo}")
+    @DeleteMapping("/notice/{noticeId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable Long postNo,
+            @PathVariable UUID noticeId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-//        experienceService.deleteNotice(postNo, auth.getUsername());
-//        return ResponseEntity.noContent().build();
-        return null;
+        experienceService.deleteNotice(noticeId, auth.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }
