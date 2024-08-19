@@ -1,6 +1,6 @@
 package com.example.hearurbackend.dto.post;
 
-import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,12 +17,12 @@ public class PostResponseDto {
     private final LocalDateTime createDate;
     private final LocalDateTime updateDate;
     private final boolean isUpdated;
-    private final List<CommentDto> comments;
+    private final List<CommentResponseDto> comments;
     private final int views;
     private final int likes;
 
     @Builder
-    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentDto> comments, int views, int likes) {
+    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes) {
         this.no = no;
         this.category = category;
         this.title = title;

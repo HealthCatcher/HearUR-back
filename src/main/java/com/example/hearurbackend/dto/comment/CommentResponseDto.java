@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-public class CommentDto {
+public class CommentResponseDto {
     private UUID id;
     private String author;
     private String content;
     private LocalDateTime createDate;
     private boolean isUpdated;
 
-    public CommentDto(UUID id, String author, String content, LocalDateTime createDate, boolean isUpdated) {
+    public CommentResponseDto(UUID id, String author, String content, LocalDateTime createDate, boolean isUpdated) {
         this.id = id;
         this.author = author;
         this.content = content;

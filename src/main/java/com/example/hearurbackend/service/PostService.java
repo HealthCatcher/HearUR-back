@@ -1,6 +1,6 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.dto.post.PostResponseDto;
 import com.example.hearurbackend.entity.community.Like;
@@ -50,11 +50,11 @@ public class PostService {
         Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
         post.increaseViews();
         postRepository.save(post);
-        List<CommentDto> commentDTOList = post.getComments().stream()
+        List<CommentResponseDto> commentDTOList = post.getComments().stream()
                 .map(comment -> {
                     Optional<User> userOptional = userService.getUser(comment.getAuthor());
                     String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-                    return new CommentDto(
+                    return new CommentResponseDto(
                             comment.getId(),
                             authorNickname,
                             comment.getContent(),

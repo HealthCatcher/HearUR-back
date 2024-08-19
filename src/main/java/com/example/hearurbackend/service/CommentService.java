@@ -1,6 +1,6 @@
 package com.example.hearurbackend.service;
 
-import com.example.hearurbackend.dto.comment.CommentDto;
+import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.repository.CommentRepository;
@@ -20,7 +20,7 @@ public class CommentService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Comment createComment(Long postNo, String username, CommentDto commentDTO) {
+    public Comment createComment(Long postNo, String username, CommentResponseDto commentDTO) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found"));
 
@@ -35,7 +35,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(String username, UUID commentId, CommentDto commentDTO) {
+    public void updateComment(String username, UUID commentId, CommentResponseDto commentDTO) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException("Comment not found"));
 
