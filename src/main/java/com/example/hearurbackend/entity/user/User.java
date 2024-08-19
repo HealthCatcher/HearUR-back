@@ -7,7 +7,7 @@ import com.example.hearurbackend.entity.diagnosis.MentalHealth;
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.diagnosis.HealthRecord;
 import com.example.hearurbackend.entity.diagnosis.Lifestyle;
-import com.example.hearurbackend.entity.experience.ExperienceNotice;
+import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.entity.experience.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -55,13 +55,13 @@ public class User {
     private MentalHealth mentalHealth;
 
     @OneToMany(mappedBy = "author")
-    private List<ExperienceNotice> myExperiences = new ArrayList<>();
+    private List<Notice> myExperiences = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews = new ArrayList<>();
 
     @ManyToMany(mappedBy = "participants")
-    private List<ExperienceNotice> participatedExperiences = new ArrayList<>();
+    private List<Notice> participatedExperiences = new ArrayList<>();
 
     public User(String username, String password, String name, String email, UserRole role) {
         this.username = username;

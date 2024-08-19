@@ -1,22 +1,24 @@
 package com.example.hearurbackend.dto.experience;
 
-import com.example.hearurbackend.dto.comment.CommentDto;
-import lombok.Builder;
+import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-@Builder
+@Getter
 public class NoticeRequestDto {
-    private final Long no;
-    private final String category;
-    private final String title;
-    private final String content;
-    private final String author;
-    private final LocalDateTime createDate;
-    private final LocalDateTime updateDate;
-    private final boolean isUpdated;
-    private final List<CommentDto> comments;
-    private final int views;
-    private final int likes;
+    private String category;
+    private String title;
+    private String content;
+    private String author;
+    private String startDate;
+    private String endDate;
+    private boolean isUpdated;
+
+    public NoticeRequestDto(String category, String title, String content, String author, String startDate, String endDate, boolean isUpdated) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isUpdated = isUpdated;
+    }
 }
